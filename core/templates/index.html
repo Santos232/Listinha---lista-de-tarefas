@@ -1,26 +1,115 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <title>Formulário com Bootstrap</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Inclui o CSS do Bootstrap -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
 
-    <ul>
-    {% for pessoa in pessoas %}
-    <li> {{ pessoa.id}} - {{ pessoa.nome}} 
-        <a href="{% url 'editar' pessoa.id %}">Editar</a>
-        <a href="{% url 'delete' pessoa.id %}">Deletar</a>
-    </li>
-    {% endfor %}
-    </ul>
+<div class="container">
+  <h2>Listinha da FICR</h2>
+  <form action="{% url 'core:salvar' %}" method="POST">{% csrf_token %}
+    <div class="form-group">
+      <label for="nome">Nome:</label>
+      <input type="text" name="nome" class="form-control" id="nome" placeholder="Digite seu nome">
+    </div>
+    <label for="nome">Importancia:</label>
+    <div class="form-group">
+        <select name="nivel" class=" form-control">
+            <option value="Facil">Facil</option>
+            <option value="Médio">Médio</option>
+            <option value="Dificil">Dificil</option>
+        </select>
+    </div> 
+    <button type="submit" class="btn btn-primary">Adicionar</button>
+  </form>
 
-    <form action="{% url 'salvar' %}" method="POST">
-        {% csrf_token %}
-        <input type="text" name="nome">
-        <button type="submit">salvar</button>
-    </form>
+  <h2>Lista de tarefas</h2>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Nível</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for pessoa in pessoa  %}
+      <tr>
+        <td>{{pessoa.nome}}</td>
+        <td>{{pessoa.importancia}}</td>
+        <td>
+
+            <a href="{% url 'core:editar' pessoa.id %}" data-toggle="modal" class="btn btn-warning" data-target="#Editar" >Editar</a>
+            {% comment %}? Alterar Tarefa {% endcomment %}
+            <div class="modal fade" id="Editar">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Editar Tarefa</h4>
+                        <button type="button" class="close" data-dismiss="modal">×</button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{% url 'core:update' pessoa.id %}" method="POST">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="nome">Nome:</label>
+                            <input type="text" value="{{pessoa.nome}}" name="nome" class="form-control" id="nome" placeholder="Digite seu nome">
+                          </div>
+                        <label for="nome">Importancia:</label>
+                        <div class="form-group">
+                            <select name="nivel" class=" form-control">
+                                <option value="Facil">Facil</option>
+                                <option value="Médio">Médio</option>
+                                <option value="Dificil">Dificil</option>
+                            </select>
+                        </div> 
+                        <div class="form-check gradient-buttons text-right ">
+                        <button class="btn btn-primary">Salvar</button>
+                        </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            </div>
+
+
+            <a href="" data-toggle="modal" class="btn btn-danger" data-target="#Excluir" >Excluir</a>
+
+            <div class="modal fade" id="Excluir">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Confirmação de exclusão</h4>
+                            <button type="button" class="close" data-dismiss="modal">×</button>
+                        </div>
+                        <div class="modal-body">
+                            <form  method="POST">
+                            {% csrf_token %}
+                            <p>Tem certeza que deseja excluir a tarefa <strong>{{ pessoa.nome }} </strong>de importancia <strong>{{pessoa.importancia}}</strong>?</p> 
+                            <div class="form-check gradient-buttons text-right ">
+                            <a href="" class="btn btn-info">Cancelar</a>
+                            <a href="{% url 'core:delete' pessoa.id %}" class="btn btn-danger">Excluir</a>
+                            </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Inclui o JavaScript do Bootstrap -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 </body>
 </html>
